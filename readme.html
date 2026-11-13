@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2efe6">
+<title>座標記錄器 · 使用說明</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f2efe6;--paper-2:#e9e4d6;--ink:#16130f;--ink-2:#3a352c;
+  --muted:#6b6558;--line:#cfc8b6;--line-2:#b5ad98;
+  --accent:#e04a00;--accent-soft:#f26a1f;--ok:#2f6b1e;--warn:#9a6a00;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --serif:"Noto Serif TC",serif;
+  --disp:"Bebas Neue",sans-serif;
+  --shadow:0 1px 0 var(--line),0 12px 40px -24px rgba(22,19,15,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:5.5rem;-webkit-text-size-adjust:100%}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--serif);
+  line-height:1.75;font-size:16.5px;min-height:100dvh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% -10%,rgba(224,74,0,.07),transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 0%,rgba(47,107,30,.05),transparent 50%);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+::selection{background:var(--accent);color:#fff}
+a{color:inherit}
+button{font-family:inherit}
+
+/* ── header ── */
+.top{
+  position:sticky;top:0;z-index:40;
+  background:rgba(242,239,230,.92);backdrop-filter:blur(10px);
+  border-bottom:2px solid var(--ink);
+}
+.top-in{
+  max-width:1120px;margin:0 auto;padding:.65rem 1.25rem;
+  display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:.6rem;min-width:0;flex:1}
+.mark{
+  width:28px;height:28px;flex:none;border:1.5px solid var(--accent);
+  display:grid;place-items:center;color:var(--accent);
+}
+.mark svg{width:14px;height:14px}
+.brand b{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);font-weight:600;
+}
+.brand span{
+  display:block;font-family:var(--disp);font-size:1.35rem;
+  letter-spacing:.06em;line-height:1;color:var(--ink);
+}
+.top-meta{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;
+  color:var(--muted);text-align:right;line-height:1.5;
+}
+.top-meta em{font-style:normal;color:var(--ink);font-weight:500}
+
+/* ── hero ── */
+.hero{
+  max-width:1120px;margin:0 auto;padding:3rem 1.25rem 2rem;
+  border-bottom:1px dashed var(--line-2);
+  display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:end;
+}
+.hero-kicker{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.28em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:.6rem;
+}
+.hero h1{
+  font-family:var(--disp);font-size:clamp(2.8rem,8vw,4.5rem);
+  line-height:.95;letter-spacing:.02em;font-weight:400;
+}
+.hero h1 small{
+  display:block;font-family:var(--serif);font-size:clamp(1.1rem,3vw,1.5rem);
+  font-weight:700;letter-spacing:.12em;margin-top:.45rem;color:var(--ink-2);
+}
+.hero-lead{
+  margin-top:1rem;max-width:36em;color:var(--ink-2);font-size:1rem;
+}
+.badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1.1rem}
+.badge{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;
+  padding:.28rem .55rem;border:1px solid var(--ink);background:var(--paper);
+  text-transform:uppercase;
+}
+.badge.hot{background:var(--accent);border-color:var(--accent);color:#fff}
+.badge.ok{background:#e4efd9;border-color:var(--ok);color:var(--ok)}
+.hero-stamp{
+  width:120px;height:120px;flex:none;border:2px solid var(--accent);
+  border-radius:50%;display:grid;place-items:center;text-align:center;
+  color:var(--accent);font-family:var(--mono);font-size:.6rem;
+  letter-spacing:.12em;line-height:1.45;transform:rotate(-8deg);
+  opacity:.85;user-select:none;
+}
+.hero-stamp b{display:block;font-family:var(--disp);font-size:1.4rem;letter-spacing:.06em;font-weight:400}
+@media(max-width:720px){
+  .hero{grid-template-columns:1fr;padding-top:2rem}
+  .hero-stamp{width:92px;height:92px;font-size:.55rem}
+}
+
+/* ── layout ── */
+.shell{
+  max-width:1120px;margin:0 auto;padding:0 1.25rem 4rem;
+  display:grid;grid-template-columns:200px 1fr;gap:2rem;
+}
+@media(max-width:880px){.shell{grid-template-columns:1fr;gap:0}}
+
+/* ── TOC ── */
+.toc{position:sticky;top:4.2rem;align-self:start;padding-top:1.75rem}
+@media(max-width:880px){
+  .toc{
+    position:sticky;top:3.1rem;z-index:30;padding:.65rem 0;
+    background:rgba(242,239,230,.95);backdrop-filter:blur(8px);
+    margin:0 -1.25rem;padding-left:1.25rem;padding-right:1.25rem;
+    border-bottom:1px solid var(--line);
+  }
+}
+.toc-label{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:.65rem;
+  display:block;
+}
+@media(max-width:880px){.toc-label{display:none}}
+.toc ol{list-style:none}
+.toc a{
+  display:flex;gap:.5rem;align-items:baseline;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;
+  color:var(--muted);text-decoration:none;padding:.32rem 0;
+  border-left:2px solid transparent;padding-left:.55rem;
+  margin-left:-2px;transition:.15s;
+}
+.toc a i{font-style:normal;color:var(--line-2);min-width:1.4em}
+.toc a:hover{color:var(--ink);border-left-color:var(--line-2)}
+.toc a.on{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.toc a.on i{color:var(--accent)}
+@media(max-width:880px){
+  .toc ol{
+    display:flex;gap:.15rem;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;padding-bottom:.15rem;
+  }
+  .toc ol::-webkit-scrollbar{display:none}
+  .toc a{
+    border-left:0;border-bottom:2px solid transparent;
+    padding:.35rem .55rem;white-space:nowrap;margin-left:0;
+  }
+  .toc a.on{border-bottom-color:var(--accent);border-left-color:transparent}
+  .toc a i{display:none}
+}
+
+/* ── content ── */
+main{padding-top:1.75rem;min-width:0}
+.sec{
+  margin-bottom:2.75rem;padding-bottom:2.25rem;
+  border-bottom:1px dashed var(--line-2);
+  scroll-margin-top:5.5rem;
+}
+.sec:last-child{border-bottom:0}
+.sec-head{display:flex;gap:.85rem;align-items:flex-start;margin-bottom:1.15rem}
+.sec-num{
+  font-family:var(--disp);font-size:clamp(2.4rem,5vw,3.2rem);
+  line-height:.9;color:transparent;-webkit-text-stroke:1.5px var(--line-2);
+  flex:none;min-width:2.2em;letter-spacing:.02em;
+  transition:.2s;
+}
+.sec:hover .sec-num{-webkit-text-stroke-color:var(--accent)}
+.sec-head h2{
+  font-size:clamp(1.25rem,3vw,1.55rem);font-weight:900;
+  letter-spacing:.06em;line-height:1.3;padding-top:.35rem;
+}
+.sec-head h2 em{
+  display:block;font-style:normal;font-family:var(--mono);
+  font-size:.65rem;letter-spacing:.2em;color:var(--accent);
+  text-transform:uppercase;font-weight:500;margin-bottom:.25rem;
+}
+.sec p{color:var(--ink-2);margin-bottom:.75rem;max-width:48em}
+.sec p strong,.sec li strong{color:var(--ink);font-weight:700}
+
+/* steps */
+.steps{list-style:none;counter-reset:s;margin:1rem 0 1.25rem;max-width:48em}
+.steps li{
+  counter-increment:s;position:relative;padding:.7rem 0 .7rem 3rem;
+  border-top:1px solid var(--line);color:var(--ink-2);
+}
+.steps li:last-child{border-bottom:1px solid var(--line)}
+.steps li::before{
+  content:counter(s,decimal-leading-zero);
+  position:absolute;left:0;top:.7rem;
+  font-family:var(--mono);font-size:.72rem;font-weight:600;
+  color:#fff;background:var(--ink);width:1.7em;height:1.7em;
+  display:grid;place-items:center;line-height:1;
+}
+.steps li:first-child::before{background:var(--accent)}
+
+/* cards grid */
+.grid{display:grid;gap:.75rem;margin:1rem 0 1.25rem}
+.grid.g2{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.grid.g3{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{
+  background:#fff;border:1px solid var(--line);padding:.9rem 1rem;
+  box-shadow:var(--shadow);
+}
+.card h3{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:.4rem;
+  font-weight:600;
+}
+.card p{font-size:.9rem;margin:0;color:var(--ink-2);line-height:1.65}
+.card .big{
+  font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;
+  color:var(--ink);line-height:1.1;margin-bottom:.2rem;
+}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;margin:1rem 0 1.25rem;border:1px solid var(--ink);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:320px}
+th,td{padding:.55rem .75rem;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;
+  text-transform:uppercase;background:var(--ink);color:var(--paper);
+  font-weight:500;white-space:nowrap;
+}
+tr:last-child td{border-bottom:0}
+tr:nth-child(even) td{background:#faf8f2}
+td code,code{
+  font-family:var(--mono);font-size:.82em;background:var(--paper-2);
+  padding:.1em .35em;border:1px solid var(--line);
+}
+kbd{
+  font-family:var(--mono);font-size:.75em;background:var(--ink);color:var(--paper);
+  padding:.15em .45em;border-radius:2px;box-shadow:0 1.5px 0 #000;
+  white-space:nowrap;
+}
+
+/* callouts */
+.note{
+  border-left:3px solid var(--accent);background:#fff7f0;
+  padding:.75rem 1rem;margin:1rem 0;font-size:.92rem;color:var(--ink-2);
+  max-width:48em;
+}
+.note b{color:var(--accent);font-family:var(--mono);font-size:.7rem;
+  letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:.25rem}
+.note.ok{border-left-color:var(--ok);background:#f3f8ee}
+.note.ok b{color:var(--ok)}
+.note.warn{border-left-color:var(--warn);background:#fdf8ec}
+.note.warn b{color:var(--warn)}
+
+/* flow chips */
+.flow{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:1rem 0;font-family:var(--mono);font-size:.72rem}
+.flow span{
+  padding:.4rem .65rem;background:#fff;border:1px solid var(--line);
+  letter-spacing:.04em;
+}
+.flow span.hi{background:var(--accent);border-color:var(--accent);color:#fff}
+.flow i{font-style:normal;color:var(--line-2);font-weight:600}
+
+/* pre */
+pre{
+  font-family:var(--mono);font-size:.78rem;line-height:1.6;
+  background:var(--ink);color:#e8e4d8;padding:1rem 1.1rem;
+  overflow-x:auto;margin:1rem 0 1.25rem;border-left:3px solid var(--accent);
+}
+pre .k{color:#ffb020}.pre .s{color:#9ccc65}
+pre .s{color:#b8e986}
+
+/* faq */
+.faq{margin:1rem 0;max-width:48em}
+details{
+  background:#fff;border:1px solid var(--line);margin-bottom:.5rem;
+  box-shadow:var(--shadow);
+}
+summary{
+  cursor:pointer;padding:.75rem 1rem;font-weight:700;font-size:.95rem;
+  list-style:none;display:flex;justify-content:space-between;gap:.75rem;
+  align-items:center;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{
+  content:"＋";font-family:var(--mono);color:var(--accent);font-weight:400;
+  font-size:1.1rem;flex:none;
+}
+details[open] summary::after{content:"−"}
+details[open] summary{border-bottom:1px solid var(--line);background:var(--paper-2)}
+details .body{padding:.75rem 1rem 1rem;font-size:.92rem;color:var(--ink-2)}
+
+/* footer */
+.foot{
+  border-top:2px solid var(--ink);background:var(--ink);color:var(--paper);
+  padding:2rem 1.25rem;margin-top:1rem;
+}
+.foot-in{
+  max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;
+  gap:1.5rem;justify-content:space-between;align-items:flex-start;
+}
+.foot strong{
+  font-family:var(--disp);font-size:1.5rem;letter-spacing:.06em;font-weight:400;
+  display:block;margin-bottom:.35rem;
+}
+.foot p{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;
+  color:#a39c8c;line-height:1.8;max-width:36em}
+.foot .hot{color:var(--accent-soft)}
+.back{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;
+  color:var(--paper);text-decoration:none;border:1px solid #5a544a;
+  padding:.55rem .9rem;transition:.15s;text-transform:uppercase;
+}
+.back:hover{border-color:var(--accent);color:var(--accent-soft)}
+
+/* back-to-top */
+.totop{
+  position:fixed;right:1rem;bottom:1rem;z-index:50;
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;
+  background:var(--ink);color:var(--paper);border:0;
+  padding:.65rem .85rem;cursor:pointer;opacity:0;pointer-events:none;
+  transition:.2s;text-transform:uppercase;
+}
+.totop.show{opacity:1;pointer-events:auto}
+.totop:hover{background:var(--accent)}
+@media print{
+  .top,.toc,.totop,.back{display:none!important}
+  body{background:#fff}
+  .shell{grid-template-columns:1fr}
+  .sec{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><path d="M12 1v5M12 18v5M1 12h5M18 12h5"/></svg>
+      </div>
+      <div>
+        <b>Coord Logger · Field Manual</b>
+        <span>座標記錄器 使用說明</span>
+      </div>
+    </div>
+    <div class="top-meta">
+      版本 <em>v1</em> · 單頁速覽<br>
+      資料存本機 · 不上傳
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="hero-kicker">Quick Reference Guide</div>
+    <h1>FIELD MANUAL<small>座標記錄器 · 快速瀏覽</small></h1>
+    <p class="hero-lead">
+      一款<strong>離線可用</strong>的本機座標筆記工具。資料只存在你的瀏覽器（IndexedDB），
+      不會上傳伺服器。適合現場勘查、工程點位、外勤巡檢等需要快速記下位置與備註的場景。
+    </p>
+    <div class="badges">
+      <span class="badge hot">離線可用</span>
+      <span class="badge">本機儲存</span>
+      <span class="badge">GPS 定位</span>
+      <span class="badge">照片筆記</span>
+      <span class="badge">匯出備份</span>
+      <span class="badge ok">PWA 安裝</span>
+    </div>
+  </div>
+  <div class="hero-stamp" aria-hidden="true">
+    <div><b>30 SEC</b>上手<br>30 秒開始</div>
+  </div>
+</section>
+
+<div class="shell">
+
+  <nav class="toc" id="toc" aria-label="章節目錄">
+    <span class="toc-label">Contents · 目錄</span>
+    <ol>
+      <li><a href="#s01"><i>01</i>快速開始</a></li>
+      <li><a href="#s02"><i>02</i>介面導覽</a></li>
+      <li><a href="#s03"><i>03</i>新增座標</a></li>
+      <li><a href="#s04"><i>04</i>標籤分類</a></li>
+      <li><a href="#s05"><i>05</i>現場照片</a></li>
+      <li><a href="#s06"><i>06</i>搜尋篩選</a></li>
+      <li><a href="#s07"><i>07</i>卡片操作</a></li>
+      <li><a href="#s08"><i>08</i>批次選取</a></li>
+      <li><a href="#s09"><i>09</i>匯出匯入</a></li>
+      <li><a href="#s10"><i>10</i>地圖檢視</a></li>
+      <li><a href="#s11"><i>11</i>安裝 App</a></li>
+      <li><a href="#s12"><i>12</i>快捷鍵</a></li>
+      <li><a href="#s13"><i>13</i>儲存空間</a></li>
+      <li><a href="#s14"><i>14</i>常見問題</a></li>
+      <li><a href="#s15"><i>15</i>資料格式</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- 01 -->
+    <section class="sec" id="s01">
+      <div class="sec-head">
+        <div class="sec-num">01</div>
+        <h2><em>Get Started</em>快速開始</h2>
+      </div>
+      <ol class="steps">
+        <li>用瀏覽器開啟工具（建議 <strong>HTTPS 或 localhost</strong>；定位與離線功能在 <code>file://</code> 下可能被封鎖）。</li>
+        <li>按頂部 <strong>「＋ 新增座標」</strong>。</li>
+        <li>允許定位權限 → 按 <strong>「記錄目前位置」</strong>，或手動輸入緯度／經度後按 <strong>「以此座標儲存」</strong>。</li>
+        <li>資料自動存進本機，關頁面再開仍在。<strong>重要資料請定期「匯出」備份。</strong></li>
+      </ol>
+      <div class="flow">
+        <span class="hi">＋ 新增</span><i>→</i>
+        <span>定位 / 輸入</span><i>→</i>
+        <span>標籤 · 照片 · 備註</span><i>→</i>
+        <span class="hi">記錄</span><i>→</i>
+        <span>自動存檔 ✓</span>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="sec" id="s02">
+      <div class="sec-head">
+        <div class="sec-num">02</div>
+        <h2><em>Layout</em>介面導覽</h2>
+      </div>
+      <div class="grid g2">
+        <div class="card"><h3>頂部工具列</h3><p>新增、地圖、安裝 App、亮／暗色、匯出、匯入、刪除（全部）。</p></div>
+        <div class="card"><h3>作業區</h3><p>新增／編輯面板：GPS 橫幅、座標、標籤、照片、名稱備註地址。</p></div>
+        <div class="card"><h3>FIELD LOG</h3><p>所有紀錄卡片、搜尋列、標籤篩選、批次選取入口。</p></div>
+        <div class="card"><h3>狀態列</h3><p>頁尾顯示筆數、版本、儲存模式（IndexedDB）、Service Worker 狀態。</p></div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="sec" id="s03">
+      <div class="sec-head">
+        <div class="sec-num">03</div>
+        <h2><em>Record</em>新增座標</h2>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <h3>方式 A · GPS 定位</h3>
+          <p>按「＋ 新增座標」→ 橫幅顯示定位進度 → 按「帶入下方」或「記錄目前位置」。尚未定位就按記錄，會<strong>先定位、鎖定後自動存檔</strong>。</p>
+        </div>
+        <div class="card">
+          <h3>方式 B · 手動輸入</h3>
+          <p>填 LAT／LNG（十進位，例 <code>25.033000</code>, <code>121.565400</code>）→ 按「以此座標儲存」或 <kbd>Enter</kbd>。</p>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>橫幅狀態</th><th>外觀</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td>待命</td><td>灰色</td><td>尚未定位，按「重新定位」開始</td></tr>
+            <tr><td>定位中…</td><td>橙色閃爍</td><td>正在取得 GPS</td></tr>
+            <tr><td>定位完成 ✓</td><td>綠色</td><td>顯示座標、精度、海拔</td></tr>
+            <tr><td>定位失敗</td><td>紅色</td><td>可按「重新定位」再試</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <b>連續記錄</b>
+        勾選「連續記錄（儲存後不關閉）」：存完面板不關，適合連續打點。
+        名稱、備註、地址、照片在儲存後會清空；<strong>標籤選擇會保留</strong>。
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="sec" id="s04">
+      <div class="sec-head">
+        <div class="sec-num">04</div>
+        <h2><em>Tags</em>標籤分類</h2>
+      </div>
+      <p>新增時可<strong>多選</strong>標籤；未選則自動用<strong>預設標籤</strong>。按「⚙ 管理」進入標籤管理面板。</p>
+      <div class="grid g3">
+        <div class="card"><h3>改名 · 改色</h3><p>文字欄直接改名；色票選單換顏色。</p></div>
+        <div class="card"><h3>★ 預設</h3><p>指定新紀錄自動套用的標籤。</p></div>
+        <div class="card"><h3>↑ ↓ 排序</h3><p>調整顯示與選擇順序。</p></div>
+        <div class="card"><h3>✕ 刪除</h3><p>有紀錄的標籤會從紀錄移除；若某紀錄因此沒標籤，自動補預設。</p></div>
+        <div class="card"><h3>新增</h3><p>輸入名稱 + 選色 →「新增」或 <kbd>Enter</kbd>。至少保留 1 個標籤。</p></div>
+        <div class="card"><h3>篩選列</h3><p>清單上方的標籤晶片＝快速篩選（見 §06）。</p></div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="sec" id="s05">
+      <div class="sec-head">
+        <div class="sec-num">05</div>
+        <h2><em>Photos</em>現場照片</h2>
+      </div>
+      <div class="grid g2">
+        <div class="card"><h3>拍照</h3><p>開啟相機（手機預設後鏡頭）。</p></div>
+        <div class="card"><h3>相簿</h3><p>從圖庫多選圖片。</p></div>
+      </div>
+      <ul style="margin:.5rem 0 1rem 1.2em;color:var(--ink-2);max-width:48em">
+        <li>照片會<strong>壓縮</strong>後存進 IndexedDB（最長邊約 900px、JPEG 品質約 70%），省空間。</li>
+        <li>點縮圖 → <strong>燈箱</strong>：雙指縮放、雙擊放大、拖曳平移、<kbd>←</kbd><kbd>→</kbd> 切換。</li>
+        <li>燈箱下方：<strong>下載 / 刪除這張 / 開啟原圖</strong>。</li>
+        <li>卡片上「＋ 照片」可替<strong>已有紀錄</strong>補拍、補傳。</li>
+      </ul>
+      <div class="note ok"><b>隱私</b>照片全部只留在你的瀏覽器裡，不會上傳任何伺服器。</div>
+    </section>
+
+    <!-- 06 -->
+    <section class="sec" id="s06">
+      <div class="sec-head">
+        <div class="sec-num">06</div>
+        <h2><em>Search & Filter</em>搜尋與篩選</h2>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <h3>搜尋框</h3>
+          <p>比對：名稱、備註、地址、標籤名、座標、時間。空白分隔＝同時符合（AND）。</p>
+          <p style="margin-top:.5rem"><kbd>/</kbd> 快速聚焦 · <kbd>Esc</kbd> 清除</p>
+        </div>
+        <div class="card">
+          <h3>標籤篩選列</h3>
+          <p>點標籤＝只看該標籤（可多選，任一符合）；再點取消；<strong>全部</strong> 一次清除。</p>
+          <p style="margin-top:.5rem">右上顯示：目前篩出幾筆 / 總筆數。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section class="sec" id="s07">
+      <div class="sec-head">
+        <div class="sec-num">07</div>
+        <h2><em>Cards</em>卡片操作</h2>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:28%">操作</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td><strong>座標列</strong></td><td>點一下複製 <code>緯度, 經度</code></td></tr>
+            <tr><td><strong>導航</strong></td><td>Google 地圖路線（呼叫手機預設導航 App）</td></tr>
+            <tr><td><strong>導航王</strong></td><td>複製座標並嘗試跳轉導航王（Android）</td></tr>
+            <tr><td><strong>編輯</strong></td><td>改座標、標籤、名稱、備註、地址（<kbd>Enter</kbd> 存、<kbd>Esc</kbd> 取消）</td></tr>
+            <tr><td><strong>⋯ 更多</strong></td><td>Google 地圖搜尋、補地址、匯出這筆、分享</td></tr>
+            <tr><td><strong>↑ ↓</strong></td><td>手動排序（上移／下移）</td></tr>
+            <tr><td><strong>✎ / ×</strong></td><td>編輯、刪除該筆</td></tr>
+            <tr><td><strong>📷</strong></td><td>檢視／加入照片</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><b>自動重查地址</b>改座標儲存後會自動向 Nominatim 重查地址（約每秒 1 次請求，同座標有快取）。也可手動按「補地址」。</div>
+    </section>
+
+    <!-- 08 -->
+    <section class="sec" id="s08">
+      <div class="sec-head">
+        <div class="sec-num">08</div>
+        <h2><em>Batch</em>批次選取</h2>
+      </div>
+      <ol class="steps">
+        <li>按 <strong>「☑ 批次選取」</strong>。</li>
+        <li>勾選卡片 → 底部出現操作列。</li>
+        <li>操作鈕在<strong>第二行</strong>（與標籤列分開），避免誤觸。</li>
+      </ol>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>按鈕</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><strong>標籤晶片</strong></td><td>給勾選紀錄「加上／移除」該標籤（已有則移除）</td></tr>
+            <tr><td><strong>匯出</strong></td><td>多筆 .txt（可含照片）</td></tr>
+            <tr><td><strong>CSV</strong></td><td>Excel 可開啟</td></tr>
+            <tr><td><strong>刪除</strong></td><td>刪除勾選項目（確認後執行）</td></tr>
+            <tr><td><strong>取消</strong></td><td>離開批次模式</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section class="sec" id="s09">
+      <div class="sec-head">
+        <div class="sec-num">09</div>
+        <h2><em>Export / Import</em>匯出與匯入</h2>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <h3>匯出</h3>
+          <p><strong>頂部「匯出」</strong>＝目前篩選後顯示的紀錄（.txt JSON）<br>
+          <strong>匯出這筆</strong>＝單筆<br>
+          <strong>批次匯出／CSV</strong>＝勾選的多筆</p>
+          <p style="margin-top:.5rem">匯出時會詢問<strong>是否含照片</strong>；含照片檔案較大。</p>
+        </div>
+        <div class="card">
+          <h3>匯入</h3>
+          <p>支援：<br>
+          • <strong>.txt / .json</strong>：本工具匯出格式，或純 <code>points</code> 陣列<br>
+          • <strong>.csv</strong>：表頭需含「緯度」「經度」（可選：名稱、標籤、地址、備註、建立時間）</p>
+          <p style="margin-top:.5rem">標籤若不存在會<strong>自動建立</strong>。</p>
+        </div>
+      </div>
+      <div class="note warn"><b>備份提醒</b>匯入前建議先匯出備份。CSV 欄位：名稱、緯度、經度、標籤、地址、備註、建立時間、照片數。</div>
+    </section>
+
+    <!-- 10 -->
+    <section class="sec" id="s10">
+      <div class="sec-head">
+        <div class="sec-num">10</div>
+        <h2><em>Map</em>地圖檢視</h2>
+      </div>
+      <p>按頂部 <strong>「地圖」</strong> 開關地圖面板。</p>
+      <ul style="margin:.5rem 0 1rem 1.2em;color:var(--ink-2);max-width:48em">
+        <li>圓點＝紀錄位置，<strong>數字＝列表序號</strong>。</li>
+        <li>點 popup 可開啟導航連結。</li>
+        <li>只顯示<strong>目前搜尋／篩選後</strong>的點。</li>
+        <li>資料沒變不會重繪（效能優化）。</li>
+        <li>地圖資料 © OpenStreetMap 貢獻者（需連網載入圖磚）。</li>
+      </ul>
+    </section>
+
+    <!-- 11 -->
+    <section class="sec" id="s11">
+      <div class="sec-head">
+        <div class="sec-num">11</div>
+        <h2><em>PWA</em>安裝為 App</h2>
+      </div>
+      <ol class="steps">
+        <li>用 <strong>HTTPS</strong> 開啟（非 <code>file://</code>）。</li>
+        <li>按頂部 <strong>「安裝App」</strong>，或用瀏覽器選單「加入主畫面」。</li>
+        <li>需同目錄有 <strong><code>sw.js</code></strong> 才能離線快取（頁尾顯示 <code>SW 已啟用</code>）。</li>
+        <li>沒有 <code>sw.js</code> 也能用，只是不能離線開啟。</li>
+      </ol>
+      <div class="grid g2">
+        <div class="card"><h3>亮色 / 暗色</h3><p>按頂部切換；偏好記在 localStorage，下次維持。</p></div>
+        <div class="card"><h3>常亮</h3><p>定位中會嘗試保持螢幕常亮（支援的瀏覽器）。</p></div>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="sec" id="s12">
+      <div class="sec-head">
+        <div class="sec-num">12</div>
+        <h2><em>Shortcuts</em>快捷鍵</h2>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>按鍵</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><kbd>/</kbd></td><td>聚焦搜尋（不在輸入框時）</td></tr>
+            <tr><td><kbd>Esc</kbd></td><td>關燈箱／清搜尋／關編輯或新增面板</td></tr>
+            <tr><td><kbd>Enter</kbd></td><td>編輯面板＝儲存；新增面板＝儲存座標</td></tr>
+            <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>燈箱上一張／下一張</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="sec" id="s13">
+      <div class="sec-head">
+        <div class="sec-num">13</div>
+        <h2><em>Storage</em>儲存與空間</h2>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>項目</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td><strong>儲存位置</strong></td><td><strong>IndexedDB</strong>（庫名 <code>coordlog</code>）；失敗時退回 localStorage（約 5MB）</td></tr>
+            <tr><td><strong>空間條</strong></td><td>頁尾顯示目前用量／配額；超過 80% 變橙色</td></tr>
+            <tr><td><strong>序列化失敗</strong></td><td>多半是照片過多 → 匯出後刪除部分照片</td></tr>
+            <tr><td><strong>刪除全部</strong></td><td>頂部「刪除」＝刪除<strong>全部</strong>紀錄（含照片，不可復原，會再次確認）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warn"><b>換機搬移</b>資料跟著「瀏覽器＋網站來源」走。用<strong>匯出 → 匯入</strong>搬移；瀏覽器帳號同步不保證涵蓋 IndexedDB，仍建議手動匯出。</div>
+    </section>
+
+    <!-- 14 -->
+    <section class="sec" id="s14">
+      <div class="sec-head">
+        <div class="sec-num">14</div>
+        <h2><em>FAQ</em>常見問題</h2>
+      </div>
+      <div class="faq">
+        <details open>
+          <summary>定位失敗？</summary>
+          <div class="body">確認瀏覽器定位權限；用 HTTPS 開；<code>file://</code> 常被封鎖；按「重新定位」再試。iOS 需在系統設定開啟定位給瀏覽器。</div>
+        </details>
+        <details>
+          <summary>地址查不到／逾時？</summary>
+          <div class="body">需能連外網（OpenStreetMap Nominatim）。可手動填地址，或稍後按「補地址」。同座標結果有快取，重查較快。</div>
+        </details>
+        <details>
+          <summary>匯入 CSV 失敗？</summary>
+          <div class="body">表頭必須有「緯度」「經度」；數值需在有效範圍（緯度 ±90、經度 ±180）；檔案需 UTF-8（含 BOM 亦可）。</div>
+        </details>
+        <details>
+          <summary>照片會不會上傳？</summary>
+          <div class="body">不會。全部只留在你的瀏覽器 IndexedDB 裡，工具沒有任何伺服器端儲存。</div>
+        </details>
+        <details>
+          <summary>地圖是空的／打不開？</summary>
+          <div class="body">地圖圖磚與 Leaflet 需連網載入。離線時列表仍可用，地圖可能空白。確認網路後重開「地圖」。</div>
+        </details>
+        <details>
+          <summary>資料會不見嗎？</summary>
+          <div class="body">清除瀏覽器資料、網站資料、或換瀏覽器都可能導致遺失。請定期按「匯出」備份 .txt 到雲端硬碟或電腦。</div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 15 -->
+    <section class="sec" id="s15">
+      <div class="sec-head">
+        <div class="sec-num">15</div>
+        <h2><em>Data Format</em>匯出格式範例</h2>
+      </div>
+      <p>頂部「匯出」的 <code>.txt</code> 本質是 JSON：</p>
+<pre>{
+  <span class="k">"v"</span>: 5,
+  <span class="k">"tags"</span>: [
+    { <span class="k">"id"</span>: <span class="s">"general"</span>, <span class="k">"name"</span>: <span class="s">"一般座標"</span>, <span class="k">"color"</span>: <span class="s">"#8b918a"</span> }
+  ],
+  <span class="k">"defaultTag"</span>: <span class="s">"general"</span>,
+  <span class="k">"points"</span>: [
+    {
+      <span class="k">"name"</span>: <span class="s">"三號電塔"</span>,
+      <span class="k">"tags"</span>: [<span class="s">"general"</span>],
+      <span class="k">"lat"</span>: 25.033,
+      <span class="k">"lng"</span>: 121.5654,
+      <span class="k">"note"</span>: <span class="s">"巡檢點"</span>,
+      <span class="k">"addr"</span>: <span class="s">"台北市中正區…"</span>,
+      <span class="k">"time"</span>: <span class="s">"2026-01-15T08:30:00.000Z"</span>,
+      <span class="k">"photos"</span>: []
+    }
+  ]
+}</pre>
+      <div class="note ok"><b>建議工作流（外勤）</b>
+        ① 出發前：開啟工具、允許定位、確認空間足夠<br>
+        ② 現場：新增座標 → 選標籤 → 拍照 → 記錄（可開連續記錄）<br>
+        ③ 收工：搜尋補地址 → 編輯備註 → 匯出備份一份
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <strong>COORD LOGGER</strong>
+      <p>
+        座標記錄器 · 使用說明單頁版<br>
+        <span class="hot">資料存於本機瀏覽器（IndexedDB），不上傳伺服器。</span><br>
+        重要資料請定期「匯出」備份。地圖資料 © OpenStreetMap 貢獻者。
+      </p>
+    </div>
+    <a class="back" href="#" id="topLink">↑ 回到頁首</a>
+  </div>
+</footer>
+
+<button class="totop" id="totop" type="button">↑ Top</button>
+
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll(".toc a"));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute("href"))}).filter(Boolean);
+  var totop=document.getElementById("totop");
+
+  function onScroll(){
+    var y=window.scrollY||0;
+    if(totop)totop.classList.toggle("show",y>480);
+    var cur=null,pad=96;
+    for(var i=0;i<secs.length;i++){
+      if(secs[i].getBoundingClientRect().top-pad<=0)cur=secs[i];
+    }
+    links.forEach(function(a){
+      a.classList.toggle("on",!!cur&&a.getAttribute("href")==="#"+cur.id);
+    });
+  }
+  window.addEventListener("scroll",onScroll,{passive:true});
+  onScroll();
+
+  if(totop)totop.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"})});
+  var tl=document.getElementById("topLink");
+  if(tl)tl.addEventListener("click",function(e){e.preventDefault();window.scrollTo({top:0,behavior:"smooth"})});
+})();
+</script>
+</body>
+</html>
